@@ -1,23 +1,17 @@
-using Bogus;
-using Microsoft.EntityFrameworkCore;
-
 namespace OffTheGrid.Models;
 
 public class Database : DbContext
 {
     public ILogger<Database> Logger { get; }
 
-    public Database(ILogger<Database> logger)
-    {
-        Logger = logger;
-    }
-    
+    public Database(ILogger<Database> logger) => Logger = logger;
+
     public DbSet<Person> People { get; set; } = default!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder
             .UseSqlite("Data Source=database.db")
-            .LogTo(m => Logger.LogInformation(m), 
+            .LogTo(m => Logger.LogInformation(m),
                 (id, _) => id.Name?.Contains("CommandExecuted") == true);
 
     public static void Initialize(WebApplication app, int count = 1_000)
@@ -25,7 +19,7 @@ public class Database : DbContext
         using var scope = app.Services.CreateScope();
         var database = scope.ServiceProvider.GetRequiredService<Database>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<Database>>();
-        
+
         // migrate the database if we haven't already
         database.Database.Migrate();
 
@@ -52,12 +46,4 @@ public class Database : DbContext
             database.ChangeTracker.Clear();
         }
     }
-}
-
-public class Person
-{
-    public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public int Age { get; set; } = 0;
-    public string Hobby { get; set; } = string.Empty;
 }

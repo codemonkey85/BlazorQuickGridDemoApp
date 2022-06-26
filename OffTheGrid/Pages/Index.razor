@@ -1,5 +1,4 @@
 ﻿@page "/"
-@using Microsoft.AspNetCore.Components.QuickGrid
 @inject Database Database
 
 <PageTitle>Index</PageTitle>
@@ -20,6 +19,3 @@
 
 <Paginator Value="@Pagination" />
 
-@code {
-    readonly PaginationState Pagination = new() { ItemsPerPage = 15 };
-}
